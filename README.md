@@ -1,19 +1,43 @@
-# 🎈 Blank app template
+# 🧪 Orange Calibration Tool — BK-280 Spline
 
-A simple Streamlit app template for you to modify!
+برنامج واحد لحساب معاملات المعايرة لجهاز **Biobase BK-280**، مدموج من 3 برامج قديمة:
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+| البرنامج القديم | اللي اتنقل منه |
+|---|---|
+| Spline-Biobase-BK-280 | Par A·B·C·D زي شاشة الجهاز (نقطة 0,0 مستبعدة) |
+| My-spline-new | Validation score · Outliers · One-point factor · Delta check · Archive · Sample/Batch simulator · الدخول |
+| Vit-D_concentraion | Natural cubic spline (اختيار تاني في أول الصفحة) |
 
-### How to run it on your own machine
+النسخ القديمة متأرشفة (read-only) على GitHub ومحدش مسحها.
 
-1. Install the requirements
+## طريقتين للحساب
+- **Cubic — Par A–D:** `Conc = A·Abs³ + B·Abs² + C·Abs + D`. دي المعاملات اللي بتتكتب في الجهاز.
+  مع 4 نقاط (بعد استبعاد الصفر) النتيجة **مطابقة بالظبط** للبرنامج القديم ولشاشة الجهاز.
+  مع أكتر من 4 نقاط بيعمل least-squares (البرنامج القديم كان بيقف بخطأ).
+- **Natural spline:** منحنى بيعدّي على كل Standard، لكل قطعة معادلتها. نفس حسابات Vit-D بالظبط.
 
-   ```
-   $ pip install -r requirements.txt
-   ```
+## الدخول (اختياري)
+لو عايز تقفل البرنامج بباسورد، حط في Streamlit → Settings → Secrets:
+```toml
+[allowed_emails]
+emails = ["name@lab.com"]
 
-2. Run the app
+[app]
+password = "..."
 
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+[contact]          # اختياري — بيظهر في صفحة الدخول
+name  = "Dr / Hussein Ali"
+phone = "..."
+email = "..."
+```
+من غير الـ Secrets دي البرنامج بيفتح على طول.
+
+## الأرشيف
+بيتحفظ طول ما الصفحة مفتوحة. نزّله **JSON** من تبويب Archive وارفعه تاني المرة الجاية (أو CSV للإكسل).
+
+## التشغيل والاختبارات
+```
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+python -m pytest -q tests        # 26 اختبار: الحسابات مطابقة للبرامج القديمة + تشغيل الواجهة كاملة
+```
